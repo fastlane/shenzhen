@@ -4,7 +4,7 @@ module Shenzhen::Plugins
   module S3
     class Client
       def initialize(access_key_id, secret_access_key, region)
-        @s3 = AWS::S3.new(:access_key_id => access_key_id,
+        @s3 = Aws::S3::Resource.new(:access_key_id => access_key_id,
           :secret_access_key => secret_access_key,
           :region => region)
       end
@@ -12,9 +12,9 @@ module Shenzhen::Plugins
       def upload_build(ipa, options)
         path = expand_path_with_substitutions_from_ipa_plist(ipa, options[:path]) if options[:path]
 
-        @s3.buckets.create(options[:bucket]) if options[:create]
+        @s3.create_bucket(bucket: options[:bucket]) if options[:create]
 
-        bucket = @s3.buckets[options[:bucket]]
+        bucket = @s3.bucket(options[:bucket])
 
         uploaded_urls = []
 
@@ -25,7 +25,8 @@ module Shenzhen::Plugins
           basename = File.basename(file)
           key = path ? File.join(path, basename) : basename
           File.open(file) do |descriptor|
-            obj = bucket.objects.create(key, descriptor, :acl => options[:acl])
+            obj = bucket.object(key)
+            obj.put(body: descriptor, acl: options[:acl])
             uploaded_urls << obj.public_url.to_s
           end
         end
@@ -72,7 +73,7 @@ command :'distribute:s3' do |c|
   c.option '-b', '--bucket BUCKET', "S3 bucket"
   c.option '--[no-]create', "Create bucket if it doesn't already exist"
   c.option '-r', '--region REGION', "Optional AWS region (for bucket creation)"
-  c.option '--acl ACL', "Uploaded object permissions e.g public_read (default), private, public_read_write, authenticated_read"
+  c.option '--acl ACL', "Uploaded object permissions: public-read (default), private, public-read-write, authenticated-read, bucket-owner-read, bucket-owner-full-control"
   c.option '--source-dir SOURCE', "Optional source directory e.g. ./build"
   c.option '-P', '--path PATH', "S3 'path'. Values from Info.plist will be substituded for keys wrapped in {}  \n\t\t eg. \"/path/to/folder/{CFBundleVersion}/\" could be evaluated as \"/path/to/folder/1.0.0/\""
 
@@ -134,6 +135,6 @@ command :'distribute:s3' do |c|
   end
 
   def determine_acl!
-    @acl ||= "public_read"
+    @acl ||= "public-read"
   end
 end
