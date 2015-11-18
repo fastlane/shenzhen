@@ -168,7 +168,7 @@ $ ipa distribute:itunesconnect -a me@email.com -p myitunesconnectpassword -i app
 > The `-i` (or `--apple-id`) flag is "An automatically generated ID assigned to your app". It can be found via iTunes Connect by navigating to:
 > * My Apps -> [App Name] -> More -> About This App -> Apple ID
 >
-> If you are planning on distributing your AppleTV app, you simply need to add `--platform appletvos`.
+> If you are planning on distributing your Apple TV app, you simply need to add `--platform appletvos`.
 >
 > For a fully hands-free upload, in a CI environment for example, ensure your iTunes Connect credentials are stored in your keychain, and that the keychain item has the Validation app in its 'Always allow access' list.  Running Shenzhen once with the `--save-keychain` flag, and clicking `Always Allow` on the prompt will set this up for you.
 
