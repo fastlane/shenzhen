@@ -52,6 +52,7 @@ command :'distribute:hockeyapp' do |c|
   c.option '-i', '--identifier PUBLIC_IDENTIFIER', "Public identifier of the app you are targeting, if not specified HockeyApp will use the bundle identifier to choose the right"
   c.option '-m', '--notes NOTES', "Release notes for the build (Default: Textile)"
   c.option '-r', '--release RELEASE', [:beta, :store, :alpha, :enterprise], "Release type: 0 - Beta, 1 - Store, 2 - Alpha , 3 - Enterprise"
+  c.option '-o', '--owner_id OWNER_ID', "optional, set to the ID of your organization"
   c.option '--markdown', 'Notes are written with Markdown'
   c.option '--tags TAGS', "Comma separated list of tags which will receive access to the build"
   c.option '--teams TEAMS', "Comma separated list of team ID numbers to which this build will be restricted"
@@ -85,6 +86,7 @@ command :'distribute:hockeyapp' do |c|
     parameters[:tags] = options.tags if options.tags
     parameters[:teams] = options.teams if options.teams
     parameters[:users] = options.users if options.users
+    parameters[:owner_id] = options.owner_id if options.owner_id
     parameters[:dsym_filename] = @dsym if @dsym
     parameters[:mandatory] = "1" if options.mandatory
     parameters[:release_type] = case options.release
