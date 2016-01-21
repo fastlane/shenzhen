@@ -195,6 +195,9 @@ $ ipa info /path/to/app.ipa
 
 Mattt Thompson ([@mattt](https://twitter.com/mattt))
 
+## Code of Conduct
+Help us keep this `shenzhen` fork open and inclusive. Please read and follow our [Code of Conduct](https://github.com/fastlane/code-of-conduct).
+
 ## License
 
 Shenzhen is released under an MIT license. See LICENSE for more information.
