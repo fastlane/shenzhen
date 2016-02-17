@@ -8,12 +8,13 @@ module Shenzhen::Plugins
     ITUNES_CONNECT_SERVER = 'Xcode:itunesconnect.apple.com'
 
     class Client
-      attr_reader :ipa, :sdk, :params
+      attr_reader :ipa, :sdk, :platform, :params
 
-      def initialize(ipa, apple_id, sdk, account, password, params = [])
+      def initialize(ipa, apple_id, sdk, platform, account, password, params = [])
         @ipa = ipa
         @apple_id = apple_id
         @sdk = sdk
+        @platform = platform
         @account = account
         @password = password
         @params = params
@@ -28,7 +29,7 @@ module Shenzhen::Plugins
           FileUtils.mkdir_p("Package.itmsp")
           FileUtils.copy_entry(@ipa, "Package.itmsp/#{@filename}")
 
-          File.write("Package.itmsp/metadata.xml", metadata(@apple_id, checksum, size))
+          File.write("Package.itmsp/metadata.xml", metadata(@apple_id, checksum, size, platform))
 
           raise if /(error)|(fail)/i === transport
         rescue
@@ -59,10 +60,10 @@ module Shenzhen::Plugins
         output
       end
 
-      def metadata(apple_id, checksum, size)
+      def metadata(apple_id, checksum, size, platform)
         %{<?xml version="1.0" encoding="UTF-8"?>
-          <package version="software4.7" xmlns="http://apple.com/itunes/importer">
-            <software_assets apple_id="#{apple_id}">
+          <package version="#{platform == "appletvos" ? "software5.3" : "software4.7"}" xmlns="http://apple.com/itunes/importer">
+            <software_assets apple_id="#{apple_id}" #{platform == "appletvos" ? "app_platform=\"#{platform}\"" : ""} >
               <asset type="bundle">
                 <data_file>
                   <file_name>#{@filename}</file_name>
@@ -89,11 +90,12 @@ command :'distribute:itunesconnect' do |c|
   c.option '-w', '--warnings', "Check for warnings when validating the ipa"
   c.option '-e', '--errors', "Check for errors when validating the ipa"
   c.option '-i', '--apple-id STRING', "Apple ID from iTunes Connect"
+  c.option '--platform platform', "Platform to use when distributing Apple TV ipas, use with 'appletvos'"
   c.option '--sdk SDK', "SDK to use when validating the ipa. Defaults to 'iphoneos'"
   c.option '--save-keychain', "Save the provided account in the keychain for future use"
 
   c.action do |args, options|
-    options.default :upload => false, :sdk => 'iphoneos', :save_keychain => true
+    options.default :upload => false, :sdk => 'iphoneos', :platform => 'ios', :save_keychain => true
 
     determine_file! unless @file = options.file
     say_error "Missing or unspecified .ipa file" and abort unless @file and File.exist?(@file)
@@ -123,7 +125,7 @@ command :'distribute:itunesconnect' do |c|
     parameters << :warnings if options.warnings
     parameters << :errors if options.errors
 
-    client = Shenzhen::Plugins::ITunesConnect::Client.new(@file, apple_id, options.sdk, @account, @password, parameters)
+    client = Shenzhen::Plugins::ITunesConnect::Client.new(@file, apple_id, options.sdk, options.platform, @account, @password, parameters)
 
     client.upload_build!
     say_ok "Upload complete."
