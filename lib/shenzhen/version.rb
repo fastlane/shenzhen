@@ -1,3 +1,3 @@
 module Shenzhen
-  VERSION = '0.14.8'
+  VERSION = '0.14.7'
 end
