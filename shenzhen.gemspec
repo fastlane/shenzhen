@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency "faraday_middleware", "~> 0.9"
   s.add_dependency "dotenv", ">= 0.7"
   s.add_dependency "net-sftp", "~> 2.1.2"
-  s.add_dependency "plist", "~> 3.1.0"
+  s.add_dependency "plist", ">= 3.1.0", "< 4.0.0"
   s.add_dependency "rubyzip", "~> 1.1"
   s.add_dependency "security", "~> 0.1.3"
 
