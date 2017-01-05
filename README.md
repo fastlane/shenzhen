@@ -1,4 +1,6 @@
-![Shenzhen](https://raw.github.com/nomad/nomad.github.io/assets/shenzhen-banner.png)
+# Deprecated: This repo isn't used in _fastlane_ any more
+
+----
 
 ## This is a fork from [nomad shenzhen](https://github.com/nomad/shenzhen) which fixes issues with the Apple Watch.
 
